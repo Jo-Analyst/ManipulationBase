@@ -95,7 +95,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(284, 49);
+            this.label5.Location = new System.Drawing.Point(278, 49);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(101, 19);
             this.label5.TabIndex = 3;
@@ -147,7 +147,7 @@
             this.groupBox2.Size = new System.Drawing.Size(822, 232);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Command:";          
+            this.groupBox2.Text = "Command:";
             // 
             // btnExecute
             // 
