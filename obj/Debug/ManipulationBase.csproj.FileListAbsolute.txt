@@ -1,0 +1,10 @@
+C:\Users\val\Desktop\my-project\ManipulationBase\bin\Debug\ManipulationBase.exe.config
+C:\Users\val\Desktop\my-project\ManipulationBase\bin\Debug\ManipulationBase.exe
+C:\Users\val\Desktop\my-project\ManipulationBase\bin\Debug\ManipulationBase.pdb
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\ManipulationBase.csprojAssemblyReference.cache
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\ManipulationBase.Properties.Resources.resources
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\ManipulationBase.csproj.GenerateResource.cache
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\ManipulationBase.exe
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\ManipulationBase.pdb
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\Manipulation.FrmDataView.resources
+C:\Users\val\Desktop\my-project\ManipulationBase\obj\Debug\Manipulation.FrmManipulation.resources
