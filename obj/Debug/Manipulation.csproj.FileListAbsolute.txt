@@ -8,3 +8,4 @@ C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.Properties.R
 C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.csproj.GenerateResource.cache
 C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.exe
 C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.pdb
+C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.FrmDesign.resources

@@ -55,6 +55,12 @@
     <Compile Include="FrmDataView.Designer.cs">
       <DependentUpon>FrmDataView.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmDesign.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmDesign.Designer.cs">
+      <DependentUpon>FrmDesign.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmManipulation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,6 +71,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmDataView.resx">
       <DependentUpon>FrmDataView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmDesign.resx">
+      <DependentUpon>FrmDesign.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmManipulation.resx">
       <DependentUpon>FrmManipulation.cs</DependentUpon>

@@ -9,7 +9,7 @@ namespace Manipulation
     public partial class FrmManipulation : Form
     {
         string master = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=master;Integrated Security=True", directory, connectionString, _sql, dataBaseInit, value, nameColumns, err;
-        int selectedIndex, positionColumn;
+        int selectedIndexCbPrimaryKey, positionColumn;
         bool isIdentity = false;
         SqlConnection connection;
         SqlCommand command;
@@ -47,6 +47,12 @@ namespace Manipulation
         private void cbMethods_SelectedIndexChanged(object sender, EventArgs e)
         {
             rbCommand.Clear();
+
+            if(cbMethods.SelectedIndex == 4)
+                btnDesign.Visible = true;
+            else
+                btnDesign.Visible = false;
+
             //gerarComandoPadrao()
             generateStandardCommand(cbMethods.SelectedIndex);
             rbCommand.Focus();
@@ -99,15 +105,33 @@ namespace Manipulation
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(rbCommand.Text))
+            if (cbMethods.SelectedIndex == -1)
             {
-                try
+                MessageBox.Show("Selecione o comando de dados para prosseguir!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            else if (string.IsNullOrWhiteSpace(rbCommand.Text))
+            {
+                MessageBox.Show("Escreva o comando sql!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+           
+            ExecuteCommandSQL();
+        }
+
+        private void ExecuteCommandSQL()
+        {
+            try
+            {
+                connection = new SqlConnection(connectionString);
+                _sql = rbCommand.Text;
+                command = new SqlCommand(_sql, connection);
+                connection.Open();
+                if (cbMethods.SelectedIndex != 10)
                 {
-                    connection = new SqlConnection(connectionString);
-                    _sql = rbCommand.Text;
-                    command = new SqlCommand(_sql, connection);
-                    connection.Open();
-                    if (cbMethods.SelectedIndex != 10)
+                    DialogResult dr = MessageBox.Show("O comando SQL inserido é um(a) " + cbMethods.Text + "?", "Manipulation", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+
+                    if (dr == DialogResult.Yes)
                     {
                         command.ExecuteNonQuery();
                         MessageBox.Show("Comando realizado com sucesso.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -115,26 +139,24 @@ namespace Manipulation
                         CheckFolder(10);
                         cbDataSource.Text = dataBaseInit;
                     }
-                    else
-                    {
-                        adapter = new SqlDataAdapter(_sql, connection);
-                        DataTable table = new DataTable();
-                        adapter.Fill(table);
-                        FrmDataView dataView = new FrmDataView(table);
-                        dataView.ShowDialog();
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    connection.Close();
+                    adapter = new SqlDataAdapter(_sql, connection);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+                    FrmDataView dataView = new FrmDataView(table);
+                    dataView.ShowDialog();
                 }
             }
-            else
-                MessageBox.Show("Escreva o comando sql!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
         private void cbDataSource_TextChanged(object sender, EventArgs e)
@@ -163,7 +185,7 @@ namespace Manipulation
                 txtNewTable.Focus();
                 return;
             }
-            else if(txtCurrentTable.Text.Trim() == txtNewTable.Text.Trim())
+            else if (txtCurrentTable.Text.Trim() == txtNewTable.Text.Trim())
             {
                 error.Clear();
                 MessageBox.Show("O nome da tabela são iguais", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -181,16 +203,10 @@ namespace Manipulation
                 return;
             }
 
-            try
-            {
-                TransferDataNewTable(ReadDataTableCurrent(txtCurrentTable.Text.Trim()), txtNewTable.Text.Trim());
-                if (string.IsNullOrEmpty(err))
-                    MessageBox.Show("Dados da Tabela " + txtCurrentTable.Text + " transferido para a tabela " + txtNewTable.Text, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            TransferDataNewTable(ReadDataTableCurrent(txtCurrentTable.Text.Trim()), txtNewTable.Text.Trim());
+
+            if (string.IsNullOrEmpty(err))
+                MessageBox.Show("Dados da Tabela " + txtCurrentTable.Text.ToUpper() + " transferido para a tabela " + txtNewTable.Text.ToUpper(), "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private DataTable ReadDataTableCurrent(string nameTable)
@@ -326,10 +342,10 @@ namespace Manipulation
             }
         }
 
-        private bool CheckTableExists(string table1)
+        private bool CheckTableExists(string currentTable)
         {
             connection = new SqlConnection(connectionString);
-            _sql = "SELECT * FROM SYSOBJECTS  WHERE  ID = OBJECT_ID('" + table1 + "')";
+            _sql = "SELECT * FROM SYSOBJECTS  WHERE  ID = OBJECT_ID('" + currentTable + "')";
             command = new SqlCommand(_sql, connection);
             try
             {
@@ -353,33 +369,6 @@ namespace Manipulation
             }
         }
 
-       private void cbPrimaryKey_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (cbPrimaryKey.Enabled)
-                {
-                    if (txtCurrentTable.Text.Trim() == txtNewTable.Text.Trim())
-                        return;
-
-                    if (CheckTableExists(txtCurrentTable.Text.Trim()) && CheckTableExists(txtNewTable.Text.Trim()))
-                    {
-
-                        cbPrimaryKey.Items.Clear();
-                        foreach (DataRow dr in TakeColumnTable(txtNewTable.Text).Rows)
-                        {
-                            cbPrimaryKey.Items.Add(dr[0].ToString());
-                        }
-                        cbPrimaryKey.SelectedIndex = selectedIndex;
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-        }
-
         private void cbDataSource_SelectedIndexChanged(object sender, EventArgs e)
         {
             error.Clear();
@@ -398,6 +387,7 @@ namespace Manipulation
 
             if (CheckDataBaseExists() == true)
             {
+                MessageBox.Show("O acesso está liberado.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 rbCommand.Enabled = true;
                 btnExecute.Enabled = true;
                 cbMethods.Enabled = true;
@@ -407,8 +397,7 @@ namespace Manipulation
                 btnTranfer.Enabled = true;
                 cbPrimaryKey.Enabled = false;
                 cbHasPrimaryKey.Enabled = false;
-                //cbPrimaryKey.SelectedIndex = 0;
-                MessageBox.Show("O acesso está liberado.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                cbMethods.Focus();
             }
             else if (!string.IsNullOrWhiteSpace(err))
             {
@@ -480,6 +469,7 @@ namespace Manipulation
             {
                 cbPrimaryKey.Enabled = true;
                 cbxIdentity.Enabled = true;
+                AddValuesColumnInCbPrimaryKey();
             }
             else
             {
@@ -490,9 +480,25 @@ namespace Manipulation
             }
         }
 
+        private void AddValuesColumnInCbPrimaryKey()
+        {
+            cbPrimaryKey.Items.Clear();
+            foreach (DataRow dr in TakeColumnTable(txtNewTable.Text).Rows)
+            {
+                cbPrimaryKey.Items.Add(dr[0].ToString());
+            }
+            cbPrimaryKey.SelectedIndex = selectedIndexCbPrimaryKey;
+        }
+
         private void cbPrimaryKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            selectedIndex = cbPrimaryKey.SelectedIndex;
+            selectedIndexCbPrimaryKey = cbPrimaryKey.SelectedIndex;
+        }
+
+        private void btnDesign_Click(object sender, EventArgs e)
+        {
+            FrmDesign Design = new FrmDesign();
+            Design.ShowDialog();
         }
 
         private void txtCurrentTable_TextChanged(object sender, EventArgs e)
@@ -502,7 +508,7 @@ namespace Manipulation
 
         private void txtNewTable_TextChanged(object sender, EventArgs e)
         {
-            // libera ou não o aceesso aos compnentes
+            // libera ou não o aceesso aos componentes
             ReleaseOrNotComponentsAcess();
         }
 

@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmManipulation));
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbHasPrimaryKey = new System.Windows.Forms.CheckBox();
             this.cbxIdentity = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cbPrimaryKey = new System.Windows.Forms.ComboBox();
@@ -51,7 +52,7 @@
             this.cbDataSource = new System.Windows.Forms.ComboBox();
             this.btnFreeAcess = new System.Windows.Forms.Button();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
-            this.cbHasPrimaryKey = new System.Windows.Forms.CheckBox();
+            this.btnDesign = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -80,6 +81,19 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Tranfer Data:";
             // 
+            // cbHasPrimaryKey
+            // 
+            this.cbHasPrimaryKey.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.cbHasPrimaryKey.AutoSize = true;
+            this.cbHasPrimaryKey.Enabled = false;
+            this.cbHasPrimaryKey.Location = new System.Drawing.Point(497, 49);
+            this.cbHasPrimaryKey.Name = "cbHasPrimaryKey";
+            this.cbHasPrimaryKey.Size = new System.Drawing.Size(133, 23);
+            this.cbHasPrimaryKey.TabIndex = 8;
+            this.cbHasPrimaryKey.Text = "Has Primary Key";
+            this.cbHasPrimaryKey.UseVisualStyleBackColor = true;
+            this.cbHasPrimaryKey.CheckedChanged += new System.EventHandler(this.cbHasPrimaryKey_CheckedChanged);
+            // 
             // cbxIdentity
             // 
             this.cbxIdentity.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -88,7 +102,7 @@
             this.cbxIdentity.Location = new System.Drawing.Point(840, 51);
             this.cbxIdentity.Name = "cbxIdentity";
             this.cbxIdentity.Size = new System.Drawing.Size(73, 23);
-            this.cbxIdentity.TabIndex = 9;
+            this.cbxIdentity.TabIndex = 10;
             this.cbxIdentity.Text = "Identity";
             this.cbxIdentity.UseVisualStyleBackColor = true;
             // 
@@ -112,19 +126,18 @@
             this.cbPrimaryKey.Location = new System.Drawing.Point(636, 49);
             this.cbPrimaryKey.Name = "cbPrimaryKey";
             this.cbPrimaryKey.Size = new System.Drawing.Size(198, 27);
-            this.cbPrimaryKey.TabIndex = 5;
+            this.cbPrimaryKey.TabIndex = 9;
             this.cbPrimaryKey.SelectedIndexChanged += new System.EventHandler(this.cbPrimaryKey_SelectedIndexChanged);
-            this.cbPrimaryKey.Click += new System.EventHandler(this.cbPrimaryKey_Click);
             this.cbPrimaryKey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbPrimaryKey_KeyDown);
             // 
-            // txtTable2
+            // txtNewTable
             // 
             this.txtNewTable.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.txtNewTable.Enabled = false;
             this.txtNewTable.Location = new System.Drawing.Point(312, 49);
-            this.txtNewTable.Name = "txtTable2";
+            this.txtNewTable.Name = "txtNewTable";
             this.txtNewTable.Size = new System.Drawing.Size(179, 26);
-            this.txtNewTable.TabIndex = 6;
+            this.txtNewTable.TabIndex = 7;
             this.txtNewTable.TextChanged += new System.EventHandler(this.txtNewTable_TextChanged);
             this.txtNewTable.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTable2_KeyDown);
             // 
@@ -156,19 +169,19 @@
             this.btnTranfer.Location = new System.Drawing.Point(919, 41);
             this.btnTranfer.Name = "btnTranfer";
             this.btnTranfer.Size = new System.Drawing.Size(128, 37);
-            this.btnTranfer.TabIndex = 7;
+            this.btnTranfer.TabIndex = 11;
             this.btnTranfer.Text = "Transfer";
             this.btnTranfer.UseVisualStyleBackColor = true;
             this.btnTranfer.Click += new System.EventHandler(this.btnTransfer_Click);
             // 
-            // txtTable1
+            // txtCurrentTable
             // 
             this.txtCurrentTable.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.txtCurrentTable.Enabled = false;
             this.txtCurrentTable.Location = new System.Drawing.Point(20, 47);
-            this.txtCurrentTable.Name = "txtTable1";
+            this.txtCurrentTable.Name = "txtCurrentTable";
             this.txtCurrentTable.Size = new System.Drawing.Size(179, 26);
-            this.txtCurrentTable.TabIndex = 5;
+            this.txtCurrentTable.TabIndex = 6;
             this.txtCurrentTable.TextChanged += new System.EventHandler(this.txtCurrentTable_TextChanged);
             this.txtCurrentTable.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTable1_KeyDown);
             // 
@@ -187,6 +200,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.btnDesign);
             this.groupBox2.Controls.Add(this.btnExecute);
             this.groupBox2.Controls.Add(this.rbCommand);
             this.groupBox2.Controls.Add(this.label3);
@@ -207,7 +221,7 @@
             this.btnExecute.Location = new System.Drawing.Point(879, 185);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(166, 37);
-            this.btnExecute.TabIndex = 4;
+            this.btnExecute.TabIndex = 5;
             this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
@@ -222,7 +236,7 @@
             this.rbCommand.Location = new System.Drawing.Point(28, 103);
             this.rbCommand.Name = "rbCommand";
             this.rbCommand.Size = new System.Drawing.Size(845, 119);
-            this.rbCommand.TabIndex = 3;
+            this.rbCommand.TabIndex = 4;
             this.rbCommand.Text = "";
             // 
             // label3
@@ -324,18 +338,17 @@
             // 
             this.error.ContainerControl = this;
             // 
-            // cbHasPrimaryKey
+            // btnDesign
             // 
-            this.cbHasPrimaryKey.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.cbHasPrimaryKey.AutoSize = true;
-            this.cbHasPrimaryKey.Enabled = false;
-            this.cbHasPrimaryKey.Location = new System.Drawing.Point(497, 49);
-            this.cbHasPrimaryKey.Name = "cbHasPrimaryKey";
-            this.cbHasPrimaryKey.Size = new System.Drawing.Size(133, 23);
-            this.cbHasPrimaryKey.TabIndex = 10;
-            this.cbHasPrimaryKey.Text = "Has Primary Key";
-            this.cbHasPrimaryKey.UseVisualStyleBackColor = true;
-            this.cbHasPrimaryKey.CheckedChanged += new System.EventHandler(this.cbHasPrimaryKey_CheckedChanged);
+            this.btnDesign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDesign.Location = new System.Drawing.Point(266, 42);
+            this.btnDesign.Name = "btnDesign";
+            this.btnDesign.Size = new System.Drawing.Size(138, 37);
+            this.btnDesign.TabIndex = 3;
+            this.btnDesign.Text = "Design";
+            this.btnDesign.UseVisualStyleBackColor = true;
+            this.btnDesign.Visible = false;
+            this.btnDesign.Click += new System.EventHandler(this.btnDesign_Click);
             // 
             // FrmManipulation
             // 
@@ -392,6 +405,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbPrimaryKey;
         private System.Windows.Forms.CheckBox cbHasPrimaryKey;
+        private System.Windows.Forms.Button btnDesign;
     }
 }
 
