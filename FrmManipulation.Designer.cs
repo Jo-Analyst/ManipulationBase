@@ -31,6 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmManipulation));
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbxIdentity = new System.Windows.Forms.CheckBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cbPrimaryKey = new System.Windows.Forms.ComboBox();
             this.txtTable2 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -48,9 +51,6 @@
             this.cbDataSource = new System.Windows.Forms.ComboBox();
             this.btnFreeAcess = new System.Windows.Forms.Button();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
-            this.cbPrimaryKey = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.cbxIdentity = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -78,6 +78,45 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Tranfer Data:";
             // 
+            // cbxIdentity
+            // 
+            this.cbxIdentity.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.cbxIdentity.AutoSize = true;
+            this.cbxIdentity.Enabled = false;
+            this.cbxIdentity.Location = new System.Drawing.Point(822, 51);
+            this.cbxIdentity.Name = "cbxIdentity";
+            this.cbxIdentity.Size = new System.Drawing.Size(73, 23);
+            this.cbxIdentity.TabIndex = 9;
+            this.cbxIdentity.Text = "Identity";
+            this.cbxIdentity.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(589, 22);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(86, 19);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "Primary Key";
+            // 
+            // cbPrimaryKey
+            // 
+            this.cbPrimaryKey.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.cbPrimaryKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbPrimaryKey.Enabled = false;
+            this.cbPrimaryKey.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cbPrimaryKey.FormattingEnabled = true;
+            this.cbPrimaryKey.Items.AddRange(new object[] {
+            "Não há chave"});
+            this.cbPrimaryKey.Location = new System.Drawing.Point(593, 47);
+            this.cbPrimaryKey.Name = "cbPrimaryKey";
+            this.cbPrimaryKey.Size = new System.Drawing.Size(214, 27);
+            this.cbPrimaryKey.TabIndex = 5;
+            this.cbPrimaryKey.SelectedIndexChanged += new System.EventHandler(this.cbPrimaryKey_SelectedIndexChanged);
+            this.cbPrimaryKey.Click += new System.EventHandler(this.cbPrimaryKey_Click);
+            this.cbPrimaryKey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbPrimaryKey_KeyDown);
+            // 
             // txtTable2
             // 
             this.txtTable2.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -95,9 +134,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(362, 25);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 19);
+            this.label6.Size = new System.Drawing.Size(76, 19);
             this.label6.TabIndex = 4;
-            this.label6.Text = "Table2";
+            this.label6.Text = "New Table";
             // 
             // label5
             // 
@@ -139,9 +178,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(47, 22);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(50, 19);
+            this.label4.Size = new System.Drawing.Size(92, 19);
             this.label4.TabIndex = 0;
-            this.label4.Text = "Table1";
+            this.label4.Text = "Current Table";
             // 
             // groupBox2
             // 
@@ -285,38 +324,6 @@
             // 
             this.error.ContainerControl = this;
             // 
-            // cbPrimaryKey
-            // 
-            this.cbPrimaryKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbPrimaryKey.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cbPrimaryKey.FormattingEnabled = true;
-            this.cbPrimaryKey.Location = new System.Drawing.Point(593, 47);
-            this.cbPrimaryKey.Name = "cbPrimaryKey";
-            this.cbPrimaryKey.Size = new System.Drawing.Size(214, 27);
-            this.cbPrimaryKey.Sorted = true;
-            this.cbPrimaryKey.TabIndex = 5;
-            // 
-            // label7
-            // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(589, 22);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 19);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Primary Key";
-            // 
-            // cbxIdentity
-            // 
-            this.cbxIdentity.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.cbxIdentity.AutoSize = true;
-            this.cbxIdentity.Location = new System.Drawing.Point(822, 51);
-            this.cbxIdentity.Name = "cbxIdentity";
-            this.cbxIdentity.Size = new System.Drawing.Size(73, 23);
-            this.cbxIdentity.TabIndex = 9;
-            this.cbxIdentity.Text = "Identity";
-            this.cbxIdentity.UseVisualStyleBackColor = true;
-            // 
             // FrmManipulation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
@@ -331,6 +338,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.MinimumSize = new System.Drawing.Size(1102, 492);
             this.Name = "FrmManipulation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Manipulation";

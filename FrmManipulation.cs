@@ -12,12 +12,12 @@ namespace Manipulation
         SqlConnection connection;
         SqlCommand command;
         SqlDataAdapter adapter;
-        int countColumn;
 
         public FrmManipulation()
         {
             InitializeComponent();
             CheckFolder(1);
+            cbPrimaryKey.SelectedIndex = 0;
         }
 
         private void CheckFolder(int num)
@@ -48,36 +48,52 @@ namespace Manipulation
             rbCommand.Clear();
             //gerarComandoPadrao()
             generateStandardCommand(cbMethods.SelectedIndex);
+            rbCommand.Focus();
         }
 
         private void generateStandardCommand(int selectedIndex)
         {
-            if (selectedIndex == 0)
-                rbCommand.Text = "EXEC SP_RENAME 'table', 'renameColumn','column' ";
-            else if (selectedIndex == 1)
-                rbCommand.Text = "ALTER DATABASE nameDatabase MODIFY NAME = newNamedatabase";
-            else if (selectedIndex == 2)
-                rbCommand.Text = "EXEC SP_RENAME 'table', 'newTable' || ALTER table nameTable add column int not null";
-            else if (selectedIndex == 3)
-                rbCommand.Text = "CREATE DATABASE nameDatabase";
-            else if (selectedIndex == 4)
-                rbCommand.Text = "CREATE TABLE nameTable(\r\n" +
-                    "  id int primary key identity(1,1)\r\n" +
-                    ")";
-            else if (selectedIndex == 5)
-                rbCommand.Text = "DELETE FROM nameTable where id = ...";
-            else if (selectedIndex == 6)
-                rbCommand.Text = "DROP DATABASE nameDatabase";
-            else if (selectedIndex == 7)
-                rbCommand.Text = "DROP TABLE nameTable";
-            else if (selectedIndex == 8)
-                rbCommand.Text = "INSERT INTO nameTable VALUES (...)";
-            else if (selectedIndex == 10)
-                rbCommand.Text = "SELECT * FROM nameTable";
-            else if (selectedIndex == 11)
-                rbCommand.Text = "UPDATE nameTable SET name = '...'";
-            else
-                rbCommand.Clear();
+            switch (selectedIndex)
+            {
+                case 0:
+                    rbCommand.Text = "EXEC SP_RENAME 'table', 'renameColumn','column' ";
+                    break;
+                case 1:
+                    rbCommand.Text = "ALTER DATABASE nameDatabase MODIFY NAME = newNamedatabase";
+                    break;
+                case 2:
+                    rbCommand.Text = "EXEC SP_RENAME 'table', 'newTable' || ALTER table nameTable add column int not null";
+                    break;
+                case 3:
+                    rbCommand.Text = "CREATE DATABASE nameDatabase";
+                    break;
+                case 4:
+                    rbCommand.Text = "CREATE TABLE nameTable(\r\n" +
+                   "id int primary key identity(1,1)\r\n" +
+                   ")";
+                    break;
+                case 5:
+                    rbCommand.Text = "DELETE FROM nameTable where id = ...";
+                    break;
+                case 6:
+                    rbCommand.Text = "DROP DATABASE nameDatabase";
+                    break;
+                case 7:
+                    rbCommand.Text = "DROP TABLE nameTable";
+                    break;
+                case 8:
+                    rbCommand.Text = "INSERT INTO nameTable VALUES (...)";
+                    break;
+                case 10:
+                    rbCommand.Text = "SELECT * FROM nameTable";
+                    break;
+                case 11:
+                    rbCommand.Text = "UPDATE nameTable SET name = '...'";
+                    break;
+                default:
+                    rbCommand.Clear();
+                    break;
+            }
         }
 
         string err;
@@ -158,6 +174,7 @@ namespace Manipulation
         {
             if (string.IsNullOrWhiteSpace(txtTable1.Text))
             {
+                error.Clear();
                 MessageBox.Show("Informe o nome da atual tabela.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 error.SetError(txtTable1, "Campo obrigatório");
                 txtTable1.Focus();
@@ -165,6 +182,7 @@ namespace Manipulation
             }
             else if (string.IsNullOrWhiteSpace(txtTable2.Text))
             {
+                error.Clear();
                 MessageBox.Show("Informe o nome da nova tabela.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 error.SetError(txtTable2, "Campo obrigatório");
                 txtTable2.Focus();
@@ -172,7 +190,9 @@ namespace Manipulation
             }
             else if(txtTable1.Text.Trim() == txtTable2.Text.Trim())
             {
+                error.Clear();
                 MessageBox.Show("O nome da tabela são iguais", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                error.SetError(txtTable1, "Campo obrigatório");
                 return;
             }
             else if (!CheckTableExists(txtTable1.Text.Trim()))
@@ -184,11 +204,12 @@ namespace Manipulation
             {
                 MessageBox.Show("Objeto " + txtTable2.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-            }
+            }           
 
             try
             {
-                TransferDataNewTable(ReadDateTable1(txtTable1.Text.Trim()), txtTable2.Text.Trim());
+                TransferDataNewTable(ReadDataTableCurrent(txtTable1.Text.Trim()), txtTable2.Text.Trim());
+                MessageBox.Show("Dados da Tabela " + txtTable1.Text + " transferido para a tabela " + txtTable2.Text, "");
             }
             catch (Exception ex)
             {
@@ -196,21 +217,21 @@ namespace Manipulation
             }
         }
 
-        private void TransferDataNewTable(DataTable table, string newTable)
+        private void TransferDataNewTable(DataTable dataTableCurrent, string newTable)
         {
             try
             {
-                if (table.Rows.Count > 0)
+                if (dataTableCurrent.Rows.Count > 0)
                 {
                     //pegar coluna da tabela
-                    TakeColumnTable(txtTable2.Text.Trim());
+                    TakeColumnTable(txtTable1.Text.Trim());
 
                     SetColumnsTable();
 
                     connection = new SqlConnection(connectionString);
-                    for (int i = 0; i < table.Rows.Count; i++)
+                    for (int i = 0; i < dataTableCurrent.Rows.Count; i++)
                     {
-                        setValuesColumns(i, table, TakeColumnTable(txtTable2.Text.Trim()));
+                        setValuesColumns(i, dataTableCurrent, TakeColumnTable(txtTable1.Text.Trim()));
 
                         _sql = "INSERT INTO " + newTable + " (" + columns + ") VALUES (" + value + ")";
                         command = new SqlCommand(_sql, connection);
@@ -266,13 +287,20 @@ namespace Manipulation
             }
         }
 
-        private void setValuesColumns(int index, DataTable table, DataTable dataTable)
+        private void setValuesColumns(int index, DataTable dataTableCurrent, DataTable ColumnTable)
         {
-            for (int cont = 0; cont < dataTable.Rows.Count; cont++)
+            int cont = 0;
+            if (cbxIdentity.Checked)
             {
-                value += "'" + table.Rows[index][cont].ToString();
+                cont = 1;
+            }
 
-                if ((cont + 1) == dataTable.Rows.Count)
+            for (cont = 0 + cont; cont < ColumnTable.Rows.Count; cont++)
+            {
+            
+                value += "'" + dataTableCurrent.Rows[index][cont].ToString();
+
+                if ((cont + 1) == ColumnTable.Rows.Count)
                 {
                     value += "'";
                     return;
@@ -284,11 +312,17 @@ namespace Manipulation
 
         private void SetColumnsTable()
         {
-            for (int i = 0; i < TakeColumnTable(txtTable2.Text.Trim()).Rows.Count; i++)
+            int cont = 0;
+            if (cbxIdentity.Checked)
             {
-                columns += TakeColumnTable(txtTable2.Text.Trim()).Rows[i]["column_name"].ToString();
+                cont = 1;
+            }
+
+            for (int i = 0 + cont; i < TakeColumnTable(txtTable1.Text.Trim()).Rows.Count; i++)
+            {
+                columns += TakeColumnTable(txtTable1.Text.Trim()).Rows[i]["column_name"].ToString();
                 
-                if ((i + 1) < TakeColumnTable(txtTable2.Text.Trim()).Rows.Count)
+                if ((i + 1) < TakeColumnTable(txtTable1.Text.Trim()).Rows.Count)
                 {
                     columns += ", ";                    
                 }                
@@ -305,7 +339,56 @@ namespace Manipulation
             error.Clear();
         }
 
-        private DataTable ReadDateTable1(string nameTable)
+        int selectedIndex;
+
+        private void cbPrimaryKey_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cbPrimaryKey.Enabled)
+                {
+                    if (txtTable1.Text.Trim() == txtTable2.Text.Trim())
+                        return;
+
+                    if (CheckTableExists(txtTable1.Text.Trim()) && CheckTableExists(txtTable2.Text.Trim()))
+                    {
+
+                        cbPrimaryKey.Items.Clear();
+                        cbPrimaryKey.Items.Add("Não há chave");
+                        foreach (DataRow dr in TakeColumnTable(txtTable2.Text).Rows)
+                        {
+                            cbPrimaryKey.Items.Add(dr[0].ToString());
+                        }
+                        cbPrimaryKey.SelectedIndex = selectedIndex;
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void cbPrimaryKey_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbPrimaryKey.SelectedIndex == 0)
+            {
+                cbxIdentity.Enabled = false;
+                cbxIdentity.Checked = false;
+            }
+            else
+                cbxIdentity.Enabled = true;
+
+            selectedIndex = cbPrimaryKey.SelectedIndex;
+        }
+
+        private void cbPrimaryKey_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnTransfer_Click(sender, e);
+        }
+
+        private DataTable ReadDataTableCurrent(string nameTable)
         {
             connection = new SqlConnection(connectionString);
             _sql = "Select * from " + nameTable;
@@ -314,6 +397,7 @@ namespace Manipulation
             adapter.Fill(table);
             return table;
         }
+
         private DataTable TakeColumnTable(string nameTable)
         {
             connection = new SqlConnection(connectionString);
@@ -348,12 +432,13 @@ namespace Manipulation
                 rbCommand.Enabled = true;
                 btnExecute.Enabled = true;
                 cbMethods.Enabled = true;
-                cbMethods.SelectedIndex = 3;
+                cbMethods.SelectedIndex = -1;
                 txtTable1.Enabled = true;
                 txtTable2.Enabled = true;
                 btnTranfer.Enabled = true;
                 cbPrimaryKey.Enabled = true;
-                cbxIdentity.Enabled = true;
+                cbPrimaryKey.SelectedIndex = 0;
+                MessageBox.Show("O acesso está liberado.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (!string.IsNullOrWhiteSpace(err))
             {
@@ -376,7 +461,10 @@ namespace Manipulation
             btnTranfer.Enabled = false;
             cbPrimaryKey.Enabled = false;
             cbxIdentity.Enabled = false;
+            cbxIdentity.Checked = false;
             cbPrimaryKey.Items.Clear();
+            cbPrimaryKey.Items.Add("Não há chave");
+            cbPrimaryKey.SelectedIndex = 0;
             cbMethods.SelectedIndex = -1;
             rbCommand.Clear();
             txtTable1.Clear();
