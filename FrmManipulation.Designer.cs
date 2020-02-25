@@ -34,11 +34,11 @@
             this.cbxIdentity = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cbPrimaryKey = new System.Windows.Forms.ComboBox();
-            this.txtTable2 = new System.Windows.Forms.TextBox();
+            this.txtNewTable = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.btnTranfer = new System.Windows.Forms.Button();
-            this.txtTable1 = new System.Windows.Forms.TextBox();
+            this.txtCurrentTable = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnExecute = new System.Windows.Forms.Button();
@@ -51,6 +51,7 @@
             this.cbDataSource = new System.Windows.Forms.ComboBox();
             this.btnFreeAcess = new System.Windows.Forms.Button();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
+            this.cbHasPrimaryKey = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -62,14 +63,15 @@
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.groupBox3.Controls.Add(this.cbHasPrimaryKey);
             this.groupBox3.Controls.Add(this.cbxIdentity);
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.cbPrimaryKey);
-            this.groupBox3.Controls.Add(this.txtTable2);
+            this.groupBox3.Controls.Add(this.txtNewTable);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.btnTranfer);
-            this.groupBox3.Controls.Add(this.txtTable1);
+            this.groupBox3.Controls.Add(this.txtCurrentTable);
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Location = new System.Drawing.Point(11, 366);
             this.groupBox3.Name = "groupBox3";
@@ -83,7 +85,7 @@
             this.cbxIdentity.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cbxIdentity.AutoSize = true;
             this.cbxIdentity.Enabled = false;
-            this.cbxIdentity.Location = new System.Drawing.Point(822, 51);
+            this.cbxIdentity.Location = new System.Drawing.Point(840, 51);
             this.cbxIdentity.Name = "cbxIdentity";
             this.cbxIdentity.Size = new System.Drawing.Size(73, 23);
             this.cbxIdentity.TabIndex = 9;
@@ -94,7 +96,7 @@
             // 
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(589, 22);
+            this.label7.Location = new System.Drawing.Point(632, 25);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(86, 19);
             this.label7.TabIndex = 8;
@@ -107,11 +109,9 @@
             this.cbPrimaryKey.Enabled = false;
             this.cbPrimaryKey.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cbPrimaryKey.FormattingEnabled = true;
-            this.cbPrimaryKey.Items.AddRange(new object[] {
-            "Não há chave"});
-            this.cbPrimaryKey.Location = new System.Drawing.Point(593, 47);
+            this.cbPrimaryKey.Location = new System.Drawing.Point(636, 49);
             this.cbPrimaryKey.Name = "cbPrimaryKey";
-            this.cbPrimaryKey.Size = new System.Drawing.Size(214, 27);
+            this.cbPrimaryKey.Size = new System.Drawing.Size(198, 27);
             this.cbPrimaryKey.TabIndex = 5;
             this.cbPrimaryKey.SelectedIndexChanged += new System.EventHandler(this.cbPrimaryKey_SelectedIndexChanged);
             this.cbPrimaryKey.Click += new System.EventHandler(this.cbPrimaryKey_Click);
@@ -119,20 +119,20 @@
             // 
             // txtTable2
             // 
-            this.txtTable2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.txtTable2.Enabled = false;
-            this.txtTable2.Location = new System.Drawing.Point(366, 49);
-            this.txtTable2.Name = "txtTable2";
-            this.txtTable2.Size = new System.Drawing.Size(212, 26);
-            this.txtTable2.TabIndex = 6;
-            this.txtTable2.TextChanged += new System.EventHandler(this.txtTable2_TextChanged);
-            this.txtTable2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTable2_KeyDown);
+            this.txtNewTable.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.txtNewTable.Enabled = false;
+            this.txtNewTable.Location = new System.Drawing.Point(312, 49);
+            this.txtNewTable.Name = "txtTable2";
+            this.txtNewTable.Size = new System.Drawing.Size(179, 26);
+            this.txtNewTable.TabIndex = 6;
+            this.txtNewTable.TextChanged += new System.EventHandler(this.txtNewTable_TextChanged);
+            this.txtNewTable.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTable2_KeyDown);
             // 
             // label6
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(362, 25);
+            this.label6.Location = new System.Drawing.Point(308, 25);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(76, 19);
             this.label6.TabIndex = 4;
@@ -142,7 +142,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(259, 52);
+            this.label5.Location = new System.Drawing.Point(205, 52);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(101, 19);
             this.label5.TabIndex = 3;
@@ -163,20 +163,20 @@
             // 
             // txtTable1
             // 
-            this.txtTable1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.txtTable1.Enabled = false;
-            this.txtTable1.Location = new System.Drawing.Point(51, 49);
-            this.txtTable1.Name = "txtTable1";
-            this.txtTable1.Size = new System.Drawing.Size(202, 26);
-            this.txtTable1.TabIndex = 5;
-            this.txtTable1.TextChanged += new System.EventHandler(this.txtTable1_TextChanged);
-            this.txtTable1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTable1_KeyDown);
+            this.txtCurrentTable.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.txtCurrentTable.Enabled = false;
+            this.txtCurrentTable.Location = new System.Drawing.Point(20, 47);
+            this.txtCurrentTable.Name = "txtTable1";
+            this.txtCurrentTable.Size = new System.Drawing.Size(179, 26);
+            this.txtCurrentTable.TabIndex = 5;
+            this.txtCurrentTable.TextChanged += new System.EventHandler(this.txtCurrentTable_TextChanged);
+            this.txtCurrentTable.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTable1_KeyDown);
             // 
             // label4
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(47, 22);
+            this.label4.Location = new System.Drawing.Point(16, 20);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(92, 19);
             this.label4.TabIndex = 0;
@@ -324,6 +324,19 @@
             // 
             this.error.ContainerControl = this;
             // 
+            // cbHasPrimaryKey
+            // 
+            this.cbHasPrimaryKey.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.cbHasPrimaryKey.AutoSize = true;
+            this.cbHasPrimaryKey.Enabled = false;
+            this.cbHasPrimaryKey.Location = new System.Drawing.Point(497, 49);
+            this.cbHasPrimaryKey.Name = "cbHasPrimaryKey";
+            this.cbHasPrimaryKey.Size = new System.Drawing.Size(133, 23);
+            this.cbHasPrimaryKey.TabIndex = 10;
+            this.cbHasPrimaryKey.Text = "Has Primary Key";
+            this.cbHasPrimaryKey.UseVisualStyleBackColor = true;
+            this.cbHasPrimaryKey.CheckedChanged += new System.EventHandler(this.cbHasPrimaryKey_CheckedChanged);
+            // 
             // FrmManipulation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
@@ -358,11 +371,11 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox txtTable2;
+        private System.Windows.Forms.TextBox txtNewTable;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnTranfer;
-        private System.Windows.Forms.TextBox txtTable1;
+        private System.Windows.Forms.TextBox txtCurrentTable;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnExecute;
@@ -378,6 +391,7 @@
         private System.Windows.Forms.CheckBox cbxIdentity;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbPrimaryKey;
+        private System.Windows.Forms.CheckBox cbHasPrimaryKey;
     }
 }
 

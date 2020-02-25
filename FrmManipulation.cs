@@ -8,7 +8,9 @@ namespace Manipulation
 {
     public partial class FrmManipulation : Form
     {
-        string master = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=master;Integrated Security=True", directory, connectionString, _sql, dataBaseInit, value, columns;
+        string master = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=master;Integrated Security=True", directory, connectionString, _sql, dataBaseInit, value, nameColumns, err;
+        int selectedIndex, positionColumn;
+        bool isIdentity = false;
         SqlConnection connection;
         SqlCommand command;
         SqlDataAdapter adapter;
@@ -17,7 +19,6 @@ namespace Manipulation
         {
             InitializeComponent();
             CheckFolder(1);
-            cbPrimaryKey.SelectedIndex = 0;
         }
 
         private void CheckFolder(int num)
@@ -96,8 +97,6 @@ namespace Manipulation
             }
         }
 
-        string err;
-
         private void btnExecute_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(rbCommand.Text))
@@ -146,75 +145,62 @@ namespace Manipulation
             }
         }
 
-        private void cbDataSource_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                btnFreeAcess_Click(sender, e);
-        }
-
-        private void FrmManipulation_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.F5)
-                btnExecute_Click(sender, e);
-        }
-
-        private void txtTable1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                btnTransfer_Click(sender, e);
-        }
-
-        private void txtTable2_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                btnTransfer_Click(sender, e);
-        }
-
         private void btnTransfer_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtTable1.Text))
+            if (string.IsNullOrWhiteSpace(txtCurrentTable.Text))
             {
                 error.Clear();
                 MessageBox.Show("Informe o nome da atual tabela.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                error.SetError(txtTable1, "Campo obrigatório");
-                txtTable1.Focus();
+                error.SetError(txtCurrentTable, "Campo obrigatório");
+                txtCurrentTable.Focus();
                 return;
             }
-            else if (string.IsNullOrWhiteSpace(txtTable2.Text))
+            else if (string.IsNullOrWhiteSpace(txtNewTable.Text))
             {
                 error.Clear();
                 MessageBox.Show("Informe o nome da nova tabela.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                error.SetError(txtTable2, "Campo obrigatório");
-                txtTable2.Focus();
+                error.SetError(txtNewTable, "Campo obrigatório");
+                txtNewTable.Focus();
                 return;
             }
-            else if(txtTable1.Text.Trim() == txtTable2.Text.Trim())
+            else if(txtCurrentTable.Text.Trim() == txtNewTable.Text.Trim())
             {
                 error.Clear();
                 MessageBox.Show("O nome da tabela são iguais", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                error.SetError(txtTable1, "Campo obrigatório");
+                error.SetError(txtCurrentTable, "Campo obrigatório");
                 return;
             }
-            else if (!CheckTableExists(txtTable1.Text.Trim()))
+            else if (!CheckTableExists(txtCurrentTable.Text.Trim()))
             {
-                MessageBox.Show("Objeto " + txtTable1.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Objeto " + txtCurrentTable.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else if (!CheckTableExists(txtTable2.Text.Trim()))
+            else if (!CheckTableExists(txtNewTable.Text.Trim()))
             {
-                MessageBox.Show("Objeto " + txtTable2.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Objeto " + txtNewTable.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-            }           
+            }
 
             try
             {
-                TransferDataNewTable(ReadDataTableCurrent(txtTable1.Text.Trim()), txtTable2.Text.Trim());
-                MessageBox.Show("Dados da Tabela " + txtTable1.Text + " transferido para a tabela " + txtTable2.Text, "");
+                TransferDataNewTable(ReadDataTableCurrent(txtCurrentTable.Text.Trim()), txtNewTable.Text.Trim());
+                if (string.IsNullOrEmpty(err))
+                    MessageBox.Show("Dados da Tabela " + txtCurrentTable.Text + " transferido para a tabela " + txtNewTable.Text, "");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private DataTable ReadDataTableCurrent(string nameTable)
+        {
+            connection = new SqlConnection(connectionString);
+            _sql = "Select * from " + nameTable;
+            adapter = new SqlDataAdapter(_sql, connection);
+            DataTable table = new DataTable();
+            adapter.Fill(table);
+            return table;
         }
 
         private void TransferDataNewTable(DataTable dataTableCurrent, string newTable)
@@ -224,16 +210,16 @@ namespace Manipulation
                 if (dataTableCurrent.Rows.Count > 0)
                 {
                     //pegar coluna da tabela
-                    TakeColumnTable(txtTable1.Text.Trim());
+                    TakeColumnTable(txtCurrentTable.Text.Trim());
 
                     SetColumnsTable();
 
                     connection = new SqlConnection(connectionString);
                     for (int i = 0; i < dataTableCurrent.Rows.Count; i++)
                     {
-                        setValuesColumns(i, dataTableCurrent, TakeColumnTable(txtTable1.Text.Trim()));
+                        SetValuesColumns(i, dataTableCurrent, TakeColumnTable(txtCurrentTable.Text.Trim()));
 
-                        _sql = "INSERT INTO " + newTable + " (" + columns + ") VALUES (" + value + ")";
+                        _sql = "INSERT INTO " + newTable + " (" + nameColumns + ") VALUES (" + value + ")";
                         command = new SqlCommand(_sql, connection);
                         try
                         {
@@ -243,6 +229,7 @@ namespace Manipulation
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            err = ex.Message;
                         }
                         finally
                         {
@@ -251,12 +238,91 @@ namespace Manipulation
 
                         value = null;
                     }
-                    columns = null;
+
+                   nameColumns = null;
                 }
+              
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private DataTable TakeColumnTable(string nameTable)
+        {
+            connection = new SqlConnection(connectionString);
+            _sql = "select column_name from information_Schema.columns where table_name = @name_Table";
+            adapter = new SqlDataAdapter(_sql, connection);
+            adapter.SelectCommand.Parameters.AddWithValue("@name_Table", nameTable);
+            DataTable table = new DataTable();
+            adapter.Fill(table);
+            return table;
+        }
+                
+        private void SetColumnsTable()
+        {
+            for (int i = 0; i < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count; i++)
+            {
+                if (cbxIdentity.Checked)
+                {
+                    if (TakePositionColumn() == i)
+                    {
+                        isIdentity = true;
+                    }
+                }
+
+                if (!isIdentity)
+                {
+                    nameColumns += TakeColumnTable(txtCurrentTable.Text.Trim()).Rows[i]["column_name"].ToString();
+
+                    if ((i + 1) < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count)
+                    {
+                        nameColumns += ", ";
+                    }
+                }
+
+                isIdentity = false;
+            }           
+        }        
+
+        private int TakePositionColumn()
+        {
+            for (int i = 0; i < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count; i++)
+            {
+                if (cbPrimaryKey.Text == TakeColumnTable(txtCurrentTable.Text.Trim()).Rows[i]["column_name"].ToString())
+                   positionColumn = i;
+            }
+
+            return positionColumn;
+        }
+
+        private void SetValuesColumns(int index, DataTable dataTableCurrent, DataTable ColumnTable)
+        {
+            for (int cont = 0; cont < ColumnTable.Rows.Count; cont++)
+            {
+                if (cbxIdentity.Checked)
+                {
+                    if (TakePositionColumn() == cont)
+                    {
+                        isIdentity = true;
+                    }
+                }
+
+                if (!isIdentity)
+                {
+                    value += "'" + dataTableCurrent.Rows[index][cont].ToString();
+
+                    if ((cont + 1) == ColumnTable.Rows.Count)
+                    {
+                        value += "'";
+                        return;
+                    }
+
+                    value += "', ";
+                }
+
+                isIdentity = false;
             }
         }
 
@@ -287,75 +353,20 @@ namespace Manipulation
             }
         }
 
-        private void setValuesColumns(int index, DataTable dataTableCurrent, DataTable ColumnTable)
-        {
-            int cont = 0;
-            if (cbxIdentity.Checked)
-            {
-                cont = 1;
-            }
-
-            for (cont = 0 + cont; cont < ColumnTable.Rows.Count; cont++)
-            {
-            
-                value += "'" + dataTableCurrent.Rows[index][cont].ToString();
-
-                if ((cont + 1) == ColumnTable.Rows.Count)
-                {
-                    value += "'";
-                    return;
-                }
-
-                value += "', ";
-            }
-        }
-
-        private void SetColumnsTable()
-        {
-            int cont = 0;
-            if (cbxIdentity.Checked)
-            {
-                cont = 1;
-            }
-
-            for (int i = 0 + cont; i < TakeColumnTable(txtTable1.Text.Trim()).Rows.Count; i++)
-            {
-                columns += TakeColumnTable(txtTable1.Text.Trim()).Rows[i]["column_name"].ToString();
-                
-                if ((i + 1) < TakeColumnTable(txtTable1.Text.Trim()).Rows.Count)
-                {
-                    columns += ", ";                    
-                }                
-            }
-        }
-
-        private void txtTable1_TextChanged(object sender, EventArgs e)
-        {
-            error.Clear();
-        }
-
-        private void txtTable2_TextChanged(object sender, EventArgs e)
-        {
-            error.Clear();
-        }
-
-        int selectedIndex;
-
-        private void cbPrimaryKey_Click(object sender, EventArgs e)
+       private void cbPrimaryKey_Click(object sender, EventArgs e)
         {
             try
             {
                 if (cbPrimaryKey.Enabled)
                 {
-                    if (txtTable1.Text.Trim() == txtTable2.Text.Trim())
+                    if (txtCurrentTable.Text.Trim() == txtNewTable.Text.Trim())
                         return;
 
-                    if (CheckTableExists(txtTable1.Text.Trim()) && CheckTableExists(txtTable2.Text.Trim()))
+                    if (CheckTableExists(txtCurrentTable.Text.Trim()) && CheckTableExists(txtNewTable.Text.Trim()))
                     {
 
                         cbPrimaryKey.Items.Clear();
-                        cbPrimaryKey.Items.Add("Não há chave");
-                        foreach (DataRow dr in TakeColumnTable(txtTable2.Text).Rows)
+                        foreach (DataRow dr in TakeColumnTable(txtNewTable.Text).Rows)
                         {
                             cbPrimaryKey.Items.Add(dr[0].ToString());
                         }
@@ -368,48 +379,6 @@ namespace Manipulation
 
             }
         }
-
-        private void cbPrimaryKey_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbPrimaryKey.SelectedIndex == 0)
-            {
-                cbxIdentity.Enabled = false;
-                cbxIdentity.Checked = false;
-            }
-            else
-                cbxIdentity.Enabled = true;
-
-            selectedIndex = cbPrimaryKey.SelectedIndex;
-        }
-
-        private void cbPrimaryKey_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                btnTransfer_Click(sender, e);
-        }
-
-        private DataTable ReadDataTableCurrent(string nameTable)
-        {
-            connection = new SqlConnection(connectionString);
-            _sql = "Select * from " + nameTable;
-            adapter = new SqlDataAdapter(_sql, connection);
-            DataTable table = new DataTable();
-            adapter.Fill(table);
-            return table;
-        }
-
-        private DataTable TakeColumnTable(string nameTable)
-        {
-            connection = new SqlConnection(connectionString);
-            _sql = "select column_name from information_Schema.columns where table_name = @name_Table";
-            adapter = new SqlDataAdapter(_sql, connection);
-            adapter.SelectCommand.Parameters.AddWithValue("@name_Table", nameTable);
-            DataTable table = new DataTable();
-            adapter.Fill(table);
-            return table;
-        }
-
-
 
         private void cbDataSource_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -433,11 +402,12 @@ namespace Manipulation
                 btnExecute.Enabled = true;
                 cbMethods.Enabled = true;
                 cbMethods.SelectedIndex = -1;
-                txtTable1.Enabled = true;
-                txtTable2.Enabled = true;
+                txtCurrentTable.Enabled = true;
+                txtNewTable.Enabled = true;
                 btnTranfer.Enabled = true;
-                cbPrimaryKey.Enabled = true;
-                cbPrimaryKey.SelectedIndex = 0;
+                cbPrimaryKey.Enabled = false;
+                cbHasPrimaryKey.Enabled = false;
+                //cbPrimaryKey.SelectedIndex = 0;
                 MessageBox.Show("O acesso está liberado.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (!string.IsNullOrWhiteSpace(err))
@@ -456,19 +426,20 @@ namespace Manipulation
             rbCommand.Enabled = false;
             btnExecute.Enabled = false;
             cbMethods.Enabled = false;
-            txtTable1.Enabled = false;
-            txtTable2.Enabled = false;
+            txtCurrentTable.Enabled = false;
+            txtNewTable.Enabled = false;
             btnTranfer.Enabled = false;
             cbPrimaryKey.Enabled = false;
             cbxIdentity.Enabled = false;
             cbxIdentity.Checked = false;
             cbPrimaryKey.Items.Clear();
-            cbPrimaryKey.Items.Add("Não há chave");
-            cbPrimaryKey.SelectedIndex = 0;
+            cbPrimaryKey.SelectedIndex = -1;
+            cbHasPrimaryKey.Enabled = false;
+            cbHasPrimaryKey.Checked = false;
             cbMethods.SelectedIndex = -1;
             rbCommand.Clear();
-            txtTable1.Clear();
-            txtTable2.Clear();
+            txtCurrentTable.Clear();
+            txtNewTable.Clear();
         }
 
         private bool CheckDataBaseExists()
@@ -484,6 +455,7 @@ namespace Manipulation
                 if (dr.Read())
                 {
                     connectionString = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=" + cbDataSource.Text.Trim() + ";Integrated Security=True";
+                    err = null;
                     return true;
                 }
                 else
@@ -500,6 +472,87 @@ namespace Manipulation
             {
                 connection.Close();
             }
+        }
+
+        private void cbHasPrimaryKey_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbHasPrimaryKey.Checked)
+            {
+                cbPrimaryKey.Enabled = true;
+                cbxIdentity.Enabled = true;
+            }
+            else
+            {
+                cbPrimaryKey.Enabled = false;
+                cbxIdentity.Enabled = false;
+                cbxIdentity.Checked = false;
+                cbPrimaryKey.SelectedIndex = -1;
+            }
+        }
+
+        private void cbPrimaryKey_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedIndex = cbPrimaryKey.SelectedIndex;
+        }
+
+        private void txtCurrentTable_TextChanged(object sender, EventArgs e)
+        {
+            ReleaseOrNotComponentsAcess();
+        }
+
+        private void txtNewTable_TextChanged(object sender, EventArgs e)
+        {
+            // libera ou não o aceesso aos compnentes
+            ReleaseOrNotComponentsAcess();
+        }
+
+        private void ReleaseOrNotComponentsAcess()
+        {
+            error.Clear();
+
+
+            if (CheckTableExists(txtCurrentTable.Text.Trim()) && CheckTableExists(txtNewTable.Text.Trim()))
+                if (txtCurrentTable.Text.Trim().ToLower() == txtNewTable.Text.Trim().ToLower())
+                {
+                    cbHasPrimaryKey.Enabled = false;
+                    cbHasPrimaryKey.Checked = false;
+                    cbPrimaryKey.Enabled = false;
+                    cbPrimaryKey.SelectedIndex = -1;
+                    cbxIdentity.Checked = false;
+                    cbxIdentity.Enabled = false;
+                }
+                else
+                    cbHasPrimaryKey.Enabled = true;
+        }
+
+        private void cbPrimaryKey_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnTransfer_Click(sender, e);
+        }
+
+        private void cbDataSource_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnFreeAcess_Click(sender, e);
+        }
+
+        private void FrmManipulation_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+                btnExecute_Click(sender, e);
+        }
+
+        private void txtTable1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnTransfer_Click(sender, e);
+        }
+
+        private void txtTable2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnTransfer_Click(sender, e);
         }
     }
 }
