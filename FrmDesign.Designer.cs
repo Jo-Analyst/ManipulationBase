@@ -36,19 +36,19 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDesign));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgvDesignTabela = new System.Windows.Forms.DataGridView();
+            this.ColName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmMenuRow = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ColDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColAllowNull = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.btnOK = new System.Windows.Forms.Button();
             this.lblFechar = new System.Windows.Forms.Label();
             this.cbPrimaryKey = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtNameTable = new System.Windows.Forms.TextBox();
-            this.cbDefineKey = new System.Windows.Forms.CheckBox();
+            this.cbxDefineKey = new System.Windows.Forms.CheckBox();
             this.cbxIdentity = new System.Windows.Forms.CheckBox();
-            this.cmMenuRow = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ColName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColDataType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColAllowNull = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDesignTabela)).BeginInit();
             this.cmMenuRow.SuspendLayout();
@@ -90,6 +90,62 @@
             this.dgvDesignTabela.TabIndex = 1;
             this.dgvDesignTabela.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvDesignTabela_KeyDown);
             // 
+            // ColName
+            // 
+            this.ColName.ContextMenuStrip = this.cmMenuRow;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Transparent;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
+            this.ColName.DefaultCellStyle = dataGridViewCellStyle1;
+            this.ColName.HeaderText = "Name";
+            this.ColName.Name = "ColName";
+            this.ColName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cmMenuRow
+            // 
+            this.cmMenuRow.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteRowToolStripMenuItem});
+            this.cmMenuRow.Name = "cmMenuRow";
+            this.cmMenuRow.Size = new System.Drawing.Size(134, 26);
+            // 
+            // deleteRowToolStripMenuItem
+            // 
+            this.deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
+            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.deleteRowToolStripMenuItem.Text = "Delete Row";
+            // 
+            // ColDataType
+            // 
+            this.ColDataType.ContextMenuStrip = this.cmMenuRow;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Transparent;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            this.ColDataType.DefaultCellStyle = dataGridViewCellStyle2;
+            this.ColDataType.HeaderText = "Data Type";
+            this.ColDataType.Name = "ColDataType";
+            this.ColDataType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.ColDataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // ColAllowNull
+            // 
+            this.ColAllowNull.ContextMenuStrip = this.cmMenuRow;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Transparent;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+            this.ColAllowNull.DefaultCellStyle = dataGridViewCellStyle3;
+            this.ColAllowNull.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
+            this.ColAllowNull.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.ColAllowNull.HeaderText = "Allow Null";
+            this.ColAllowNull.Items.AddRange(new object[] {
+            "NOT NULL",
+            "NULL"});
+            this.ColAllowNull.Name = "ColAllowNull";
+            this.ColAllowNull.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.ColAllowNull.Sorted = true;
+            // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -126,6 +182,8 @@
             this.cbPrimaryKey.Name = "cbPrimaryKey";
             this.cbPrimaryKey.Size = new System.Drawing.Size(121, 27);
             this.cbPrimaryKey.TabIndex = 3;
+            this.cbPrimaryKey.SelectedIndexChanged += new System.EventHandler(this.cbPrimaryKey_SelectedIndexChanged);
+            this.cbPrimaryKey.Click += new System.EventHandler(this.cbPrimaryKey_Click);
             // 
             // label1
             // 
@@ -158,15 +216,15 @@
             // 
             // cbDefineKey
             // 
-            this.cbDefineKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbDefineKey.AutoSize = true;
-            this.cbDefineKey.Location = new System.Drawing.Point(28, 229);
-            this.cbDefineKey.Name = "cbDefineKey";
-            this.cbDefineKey.Size = new System.Drawing.Size(98, 23);
-            this.cbDefineKey.TabIndex = 2;
-            this.cbDefineKey.Text = "Definir Key";
-            this.cbDefineKey.UseVisualStyleBackColor = true;
-            this.cbDefineKey.CheckedChanged += new System.EventHandler(this.cbDefineKey_CheckedChanged);
+            this.cbxDefineKey.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbxDefineKey.AutoSize = true;
+            this.cbxDefineKey.Location = new System.Drawing.Point(28, 229);
+            this.cbxDefineKey.Name = "cbDefineKey";
+            this.cbxDefineKey.Size = new System.Drawing.Size(98, 23);
+            this.cbxDefineKey.TabIndex = 2;
+            this.cbxDefineKey.Text = "Definir Key";
+            this.cbxDefineKey.UseVisualStyleBackColor = true;
+            this.cbxDefineKey.CheckedChanged += new System.EventHandler(this.cbxDefineKey_CheckedChanged);
             // 
             // cbxIdentity
             // 
@@ -180,62 +238,6 @@
             this.cbxIdentity.Text = "Identity";
             this.cbxIdentity.UseVisualStyleBackColor = true;
             // 
-            // cmMenuRow
-            // 
-            this.cmMenuRow.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteRowToolStripMenuItem});
-            this.cmMenuRow.Name = "cmMenuRow";
-            this.cmMenuRow.Size = new System.Drawing.Size(134, 26);
-            // 
-            // deleteRowToolStripMenuItem
-            // 
-            this.deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
-            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.deleteRowToolStripMenuItem.Text = "Delete Row";
-            // 
-            // ColName
-            // 
-            this.ColName.ContextMenuStrip = this.cmMenuRow;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Transparent;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
-            this.ColName.DefaultCellStyle = dataGridViewCellStyle1;
-            this.ColName.HeaderText = "Name";
-            this.ColName.Name = "ColName";
-            this.ColName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // ColDataType
-            // 
-            this.ColDataType.ContextMenuStrip = this.cmMenuRow;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Transparent;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            this.ColDataType.DefaultCellStyle = dataGridViewCellStyle2;
-            this.ColDataType.HeaderText = "Data Type";
-            this.ColDataType.Name = "ColDataType";
-            this.ColDataType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ColDataType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // ColAllowNull
-            // 
-            this.ColAllowNull.ContextMenuStrip = this.cmMenuRow;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Transparent;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
-            this.ColAllowNull.DefaultCellStyle = dataGridViewCellStyle3;
-            this.ColAllowNull.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
-            this.ColAllowNull.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.ColAllowNull.HeaderText = "Allow Null";
-            this.ColAllowNull.Items.AddRange(new object[] {
-            "NOT NULL",
-            "NULL"});
-            this.ColAllowNull.Name = "ColAllowNull";
-            this.ColAllowNull.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ColAllowNull.Sorted = true;
-            // 
             // FrmDesign
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
@@ -243,7 +245,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(589, 266);
             this.Controls.Add(this.cbxIdentity);
-            this.Controls.Add(this.cbDefineKey);
+            this.Controls.Add(this.cbxDefineKey);
             this.Controls.Add(this.txtNameTable);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -280,7 +282,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtNameTable;
-        private System.Windows.Forms.CheckBox cbDefineKey;
+        private System.Windows.Forms.CheckBox cbxDefineKey;
         private System.Windows.Forms.CheckBox cbxIdentity;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColName;
         private System.Windows.Forms.ContextMenuStrip cmMenuRow;

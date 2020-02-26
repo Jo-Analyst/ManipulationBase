@@ -42,6 +42,7 @@
             this.txtCurrentTable = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnDesign = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
             this.rbCommand = new System.Windows.Forms.RichTextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,7 +53,6 @@
             this.cbDataSource = new System.Windows.Forms.ComboBox();
             this.btnFreeAcess = new System.Windows.Forms.Button();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
-            this.btnDesign = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -213,6 +213,18 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Command:";
             // 
+            // btnDesign
+            // 
+            this.btnDesign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDesign.Location = new System.Drawing.Point(266, 42);
+            this.btnDesign.Name = "btnDesign";
+            this.btnDesign.Size = new System.Drawing.Size(138, 37);
+            this.btnDesign.TabIndex = 3;
+            this.btnDesign.Text = "Design";
+            this.btnDesign.UseVisualStyleBackColor = true;
+            this.btnDesign.Visible = false;
+            this.btnDesign.Click += new System.EventHandler(this.btnDesign_Click);
+            // 
             // btnExecute
             // 
             this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -337,18 +349,6 @@
             // error
             // 
             this.error.ContainerControl = this;
-            // 
-            // btnDesign
-            // 
-            this.btnDesign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDesign.Location = new System.Drawing.Point(266, 42);
-            this.btnDesign.Name = "btnDesign";
-            this.btnDesign.Size = new System.Drawing.Size(138, 37);
-            this.btnDesign.TabIndex = 3;
-            this.btnDesign.Text = "Design";
-            this.btnDesign.UseVisualStyleBackColor = true;
-            this.btnDesign.Visible = false;
-            this.btnDesign.Click += new System.EventHandler(this.btnDesign_Click);
             // 
             // FrmManipulation
             // 

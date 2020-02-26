@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Manipulation
 {
     public partial class FrmDesign : Form
     {
-        public FrmDesign()
+        string connectionString;
+
+        public FrmDesign(string connectionString)
         {
             InitializeComponent();
+            this.connectionString = connectionString;
         }
 
         string commandCreate;
@@ -34,57 +33,105 @@ namespace Manipulation
             this.Close();
         }
 
-        bool camposPreenchidos = false;
-
         private void btnOK_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CreateTable();
-                
-                //this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show( ex.Message +",   Erro. Informe os dados corretamente para prosseguir.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void CreateTable()
         {
             if (string.IsNullOrWhiteSpace(txtNameTable.Text))
             {
                 error.Clear();
-                MessageBox.Show("Informe o nome da tabela", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Informe o nome da tabela!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 error.SetError(txtNameTable, "Campo obrigatório");
                 txtNameTable.Focus();
                 return;
             }
-            if (dgvDesignTabela.Rows.Count == 1)
+            else if (dgvDesignTabela.Rows.Count == 1)
             {
-                MessageBox.Show("Informe as colunas da tabela", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Informe as colunas da tabela!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            else if (cbxDefineKey.Checked && cbPrimaryKey.SelectedIndex == -1)
+            {
+                MessageBox.Show("Informe a chave primária!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
+            CreateTable();
+
+            if (!string.IsNullOrEmpty(commandCreate))
+            {
+                ExecuteCommand();
+            }
+        }
+
+        private void ExecuteCommand()
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            string _sql = commandCreate;
+            SqlCommand command = new SqlCommand(_sql, connection);
+            try
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+                MessageBox.Show("Tabela criado com sucesso.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        string Key;
+
+        private void CreateTable()
+        {
             int countRowDgw = dgvDesignTabela.Rows.Count - 1;
             commandCreate = "CREATE TABLE " + txtNameTable.Text.Trim() + " (\r\n";
-            for (int i = 0; i < countRowDgw; i++)
-            {
-                  commandCreate += dgvDesignTabela.Rows[i].Cells[0].Value.ToString() + " " +
-                   dgvDesignTabela.Rows[i].Cells[1].Value.ToString() + " " + dgvDesignTabela.Rows[i].Cells[2].Value.ToString();
 
-                if(countRowDgw > 1 && (i + 1) < countRowDgw)
+            try
+            {
+                for (int i = 0; i < countRowDgw; i++)
                 {
-                    commandCreate += ", \r\n";
+                    if (cbxDefineKey.Checked)
+                    {
+                        if (dgvDesignTabela.Rows[i].Cells[0].Value.ToString() == cbPrimaryKey.Text)
+                        {
+                            if (cbxIdentity.Checked)
+                                Key = "PRIMARY KEY IDENTITY";
+
+                            else
+                                Key = "PRIMARY KEY";
+                        }
+
+                    }
+
+                    commandCreate += dgvDesignTabela.Rows[i].Cells[0].Value.ToString() + " "
+                       + dgvDesignTabela.Rows[i].Cells[1].Value.ToString() + " " + Key + " " + dgvDesignTabela.Rows[i].Cells[2].Value.ToString();
+
+                    if (countRowDgw > 1 && (i + 1) < countRowDgw)
+                    {
+                        commandCreate += ", \r\n";
+                    }
+
+                    Key = null;
                 }
 
-            }
-            commandCreate += ")";
+                commandCreate += ")";
                 MessageBox.Show(commandCreate);
+            }
+            catch
+            {
+                MessageBox.Show("Preencha as colunas necessárias!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                commandCreate = null;
+            }
         }
 
         ErrorProvider error = new ErrorProvider();
         public DataTable columnTable = new DataTable();
+        int selectedIndexCbPrimaryKey = -1;
+
         public string nameTable { get; set; }
 
         private void dgvDesignTabela_KeyDown(object sender, KeyEventArgs e)
@@ -113,9 +160,9 @@ namespace Manipulation
             }
         }
 
-        private void cbDefineKey_CheckedChanged(object sender, EventArgs e)
+        private void cbxDefineKey_CheckedChanged(object sender, EventArgs e)
         {
-            if (cbDefineKey.Checked)
+            if (cbxDefineKey.Checked)
             {
                 cbxIdentity.Enabled = true;
                 cbPrimaryKey.Enabled = true;
@@ -127,23 +174,45 @@ namespace Manipulation
                 cbPrimaryKey.Enabled = false;
                 cbPrimaryKey.SelectedIndex = -1;
                 cbxIdentity.Checked = false;
-                //cbPrimaryKey.Items.Clear();
+                Key = "";
             }
         }
 
         private void AddValuesColumnInCbPrimaryKey()
         {
-            //cbPrimaryKey.Items.Clear();
-            //foreach (DataRow dr in TakeColumnTable(txtNewTable.Text).Rows)
-            //{
-            //    cbPrimaryKey.Items.Add(dr[0].ToString());
-            //}
-            //cbPrimaryKey.SelectedIndex = selectedIndexCbPrimaryKey;
+            cbPrimaryKey.Items.Clear();
+
+            for (int i = 0; i < dgvDesignTabela.Rows.Count - 1; i++)
+            {
+                try
+                {
+                    if (dgvDesignTabela.Rows[i].Cells[0].Value.ToString() == null)
+                        return;
+
+                    cbPrimaryKey.Items.Add(dgvDesignTabela.Rows[i].Cells[0].Value.ToString());
+                }
+                catch
+                {
+                    
+                }
+            }
+
+            cbPrimaryKey.SelectedIndex = selectedIndexCbPrimaryKey;
         }
 
         private void txtNameTable_TextChanged(object sender, EventArgs e)
         {
             error.Clear();
+        }
+
+        private void cbPrimaryKey_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedIndexCbPrimaryKey = cbPrimaryKey.SelectedIndex;
+        }
+
+        private void cbPrimaryKey_Click(object sender, EventArgs e)
+        {
+            AddValuesColumnInCbPrimaryKey();
         }
     }
 }

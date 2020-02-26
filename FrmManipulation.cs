@@ -172,7 +172,7 @@ namespace Manipulation
             if (string.IsNullOrWhiteSpace(txtCurrentTable.Text))
             {
                 error.Clear();
-                MessageBox.Show("Informe o nome da atual tabela.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Informe o nome da atual tabela!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 error.SetError(txtCurrentTable, "Campo obrigatório");
                 txtCurrentTable.Focus();
                 return;
@@ -180,7 +180,7 @@ namespace Manipulation
             else if (string.IsNullOrWhiteSpace(txtNewTable.Text))
             {
                 error.Clear();
-                MessageBox.Show("Informe o nome da nova tabela.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Informe o nome da nova tabela!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 error.SetError(txtNewTable, "Campo obrigatório");
                 txtNewTable.Focus();
                 return;
@@ -188,7 +188,7 @@ namespace Manipulation
             else if (txtCurrentTable.Text.Trim() == txtNewTable.Text.Trim())
             {
                 error.Clear();
-                MessageBox.Show("O nome da tabela são iguais", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("O nome da tabela são iguais.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 error.SetError(txtCurrentTable, "Campo obrigatório");
                 return;
             }
@@ -200,6 +200,21 @@ namespace Manipulation
             else if (!CheckTableExists(txtNewTable.Text.Trim()))
             {
                 MessageBox.Show("Objeto " + txtNewTable.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            else if(TakeColumnTable(txtNewTable.Text.Trim()).Rows.Count < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count)
+            {
+                MessageBox.Show("O número de colunas da tabela " + txtNewTable.Text.ToUpper() + " é menor que a tabela " + txtCurrentTable.Text.ToUpper() + "!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            else if (TakeColumnTable(txtNewTable.Text.Trim()).Rows.Count > TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count)
+            {
+                MessageBox.Show("O número de colunas da tabela " + txtNewTable.Text.ToUpper() + " é maior que a tabela " + txtCurrentTable.Text.ToUpper() + "!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            else if(ReadDataTableCurrent(txtNewTable.Text.Trim()).Rows.Count > 0)
+            {
+                MessageBox.Show("Não é permitido tranferir dados para uma tabela já populada!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
@@ -265,6 +280,8 @@ namespace Manipulation
             }
         }
 
+        // pega as colunas da tabela e insere em um DataTable
+        
         private DataTable TakeColumnTable(string nameTable)
         {
             connection = new SqlConnection(connectionString);
@@ -483,7 +500,7 @@ namespace Manipulation
         private void AddValuesColumnInCbPrimaryKey()
         {
             cbPrimaryKey.Items.Clear();
-            foreach (DataRow dr in TakeColumnTable(txtNewTable.Text).Rows)
+            foreach (DataRow dr in TakeColumnTable(txtCurrentTable.Text).Rows)
             {
                 cbPrimaryKey.Items.Add(dr[0].ToString());
             }
@@ -497,7 +514,7 @@ namespace Manipulation
 
         private void btnDesign_Click(object sender, EventArgs e)
         {
-            FrmDesign Design = new FrmDesign();
+            FrmDesign Design = new FrmDesign(connectionString);
             Design.ShowDialog();
         }
 
