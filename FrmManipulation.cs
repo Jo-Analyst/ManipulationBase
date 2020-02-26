@@ -48,7 +48,7 @@ namespace Manipulation
         {
             rbCommand.Clear();
 
-            if(cbMethods.SelectedIndex == 4)
+            if (cbMethods.SelectedIndex == 4)
                 btnDesign.Visible = true;
             else
                 btnDesign.Visible = false;
@@ -115,7 +115,7 @@ namespace Manipulation
                 MessageBox.Show("Escreva o comando sql!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-           
+
             ExecuteCommandSQL();
         }
 
@@ -202,7 +202,7 @@ namespace Manipulation
                 MessageBox.Show("Objeto " + txtNewTable.Text.Trim() + " não existe.", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else if(TakeColumnTable(txtNewTable.Text.Trim()).Rows.Count < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count)
+            else if (TakeColumnTable(txtNewTable.Text.Trim()).Rows.Count < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count)
             {
                 MessageBox.Show("O número de colunas da tabela " + txtNewTable.Text.ToUpper() + " é menor que a tabela " + txtCurrentTable.Text.ToUpper() + "!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -212,19 +212,24 @@ namespace Manipulation
                 MessageBox.Show("O número de colunas da tabela " + txtNewTable.Text.ToUpper() + " é maior que a tabela " + txtCurrentTable.Text.ToUpper() + "!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            else if(ReadDataTableCurrent(txtNewTable.Text.Trim()).Rows.Count > 0)
+            else if (ReadDataTable(txtNewTable.Text.Trim()).Rows.Count > 0)
             {
                 MessageBox.Show("Não é permitido tranferir dados para uma tabela já populada!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+            else if (ReadDataTable(txtCurrentTable.Text.Trim()).Rows.Count == 0)
+            {
+                MessageBox.Show("Não em como tranferir dados de uma tabela vazia!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
 
-            TransferDataNewTable(ReadDataTableCurrent(txtCurrentTable.Text.Trim()), txtNewTable.Text.Trim());
+            TransferDataNewTable(ReadDataTable(txtCurrentTable.Text.Trim()), txtNewTable.Text.Trim());
 
             if (string.IsNullOrEmpty(err))
                 MessageBox.Show("Dados da Tabela " + txtCurrentTable.Text.ToUpper() + " transferido para a tabela " + txtNewTable.Text.ToUpper(), "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private DataTable ReadDataTableCurrent(string nameTable)
+        private DataTable ReadDataTable(string nameTable)
         {
             connection = new SqlConnection(connectionString);
             _sql = "Select * from " + nameTable;
@@ -251,32 +256,25 @@ namespace Manipulation
                         SetValuesColumns(i, dataTableCurrent, TakeColumnTable(txtCurrentTable.Text.Trim()));
 
                         _sql = "INSERT INTO " + newTable + " (" + nameColumns + ") VALUES (" + value + ")";
+                        MessageBox.Show(_sql);
                         command = new SqlCommand(_sql, connection);
-                        try
-                        {
-                            connection.Open();
-                            command.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            err = ex.Message;
-                        }
-                        finally
-                        {
-                            connection.Close();
-                        }
+
+                        connection.Open();
+                        command.ExecuteNonQuery();
 
                         value = null;
                     }
-
-                   nameColumns = null;
                 }
-              
+
+                nameColumns = null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                connection.Close();
             }
         }
 
@@ -292,13 +290,15 @@ namespace Manipulation
             adapter.Fill(table);
             return table;
         }
-                
+
+        int rowSubtractKey;
         private void SetColumnsTable()
         {
             for (int i = 0; i < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count; i++)
             {
                 if (cbxIdentity.Checked)
                 {
+                    rowSubtractKey = TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count - 1;
                     if (TakePositionColumn() == i)
                     {
                         isIdentity = true;
@@ -309,7 +309,8 @@ namespace Manipulation
                 {
                     nameColumns += TakeColumnTable(txtCurrentTable.Text.Trim()).Rows[i]["column_name"].ToString();
 
-                    if ((i + 1) < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count)
+                    if ((i + 1) < TakeColumnTable(txtCurrentTable.Text.Trim()).Rows.Count &&
+                        rowSubtractKey > 1)
                     {
                         nameColumns += ", ";
                     }
@@ -336,9 +337,12 @@ namespace Manipulation
             {
                 if (cbxIdentity.Checked)
                 {
+                    rowSubtractKey = ColumnTable.Rows.Count - 1;
                     if (TakePositionColumn() == cont)
                     {
                         isIdentity = true;
+                        if (TakePositionColumn() > 0)
+                            value += "'";
                     }
                 }
 
@@ -352,7 +356,8 @@ namespace Manipulation
                         return;
                     }
 
-                    value += "', ";
+                    if (ColumnTable.Rows.Count > 1 && rowSubtractKey > 1)
+                        value += "', ";
                 }
 
                 isIdentity = false;

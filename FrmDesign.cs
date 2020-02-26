@@ -119,7 +119,6 @@ namespace Manipulation
                 }
 
                 commandCreate += ")";
-                MessageBox.Show(commandCreate);
             }
             catch
             {
