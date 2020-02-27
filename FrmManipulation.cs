@@ -219,7 +219,7 @@ namespace Manipulation
             }
             else if (ReadDataTable(txtCurrentTable.Text.Trim()).Rows.Count == 0)
             {
-                MessageBox.Show("Não em como tranferir dados de uma tabela vazia!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Não tem como tranferir dados de uma tabela vazia!", "Manipulation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
@@ -256,7 +256,6 @@ namespace Manipulation
                         SetValuesColumns(i, dataTableCurrent, TakeColumnTable(txtCurrentTable.Text.Trim()));
 
                         _sql = "INSERT INTO " + newTable + " (" + nameColumns + ") VALUES (" + value + ")";
-                        MessageBox.Show(_sql);
                         command = new SqlCommand(_sql, connection);
 
                         connection.Open();
