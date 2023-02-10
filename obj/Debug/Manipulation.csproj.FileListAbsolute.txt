@@ -9,3 +9,16 @@ C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.csproj.Gener
 C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.exe
 C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.pdb
 C:\Users\val\Desktop\my-project\Manipulation\obj\Debug\Manipulation.FrmDesign.resources
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\bin\Debug\Manipulation.exe.config
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\bin\Debug\Manipulation.exe
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\bin\Debug\Manipulation.pdb
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.csproj.AssemblyReference.cache
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.csproj.SuggestedBindingRedirects.cache
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.FrmDataView.resources
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.FrmDesign.resources
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.FrmManipulation.resources
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.Properties.Resources.resources
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.csproj.GenerateResource.cache
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.csproj.CoreCompileInputs.cache
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.exe
+C:\Users\jojoc\OneDrive\Documentos\Meus projetos\ManipulationBase\obj\Debug\Manipulation.pdb

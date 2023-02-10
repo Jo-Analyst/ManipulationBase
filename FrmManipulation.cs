@@ -8,7 +8,7 @@ namespace Manipulation
 {
     public partial class FrmManipulation : Form
     {
-        string master = @"Data Source=LOCALHOST\SQLEXPRESS;Initial Catalog=master;Integrated Security=True", directory, connectionString, _sql, dataBaseInit, value, nameColumns, err;
+        string master = @"Data Source=LOCALHOST\LAS;Initial Catalog=master;Integrated Security=True", directory, connectionString, _sql, dataBaseInit, value, nameColumns, err;
         int selectedIndexCbPrimaryKey, positionColumn;
         bool isIdentity = false;
         SqlConnection connection;
@@ -23,7 +23,7 @@ namespace Manipulation
 
         private void CheckFolder(int num)
         {
-            directory = @"C:\Program Files\Microsoft SQL Server\MSSQL" + num + @".SQLEXPRESS\MSSQL\DATA";
+            directory = $@"C:\Program Files\Microsoft SQL Server\MSSQL{num}.LAS\MSSQL\DATA";
 
             if (Directory.Exists(directory))
             {
